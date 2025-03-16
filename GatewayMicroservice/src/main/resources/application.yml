@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: Gateway
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+
+  cloud:
+    gateway:
+      routes:
+      - id: user-service
+        uri: http://user-microservice:8081
+        predicates:
+        - Path=/api/user/**
+
+      # Route for static assets (JavaScript, CSS, fonts, etc.)
+      - id: frontend-static-assets
+        uri: http://frontend-microservice:3000
+        predicates:
+        - Path=/_next/static/**,/static/**,/favicon.ico
+
+      # Catch-all route for anything that is not /api or /ws
+      - id: frontend-service
+        uri: http://frontend-microservice:3000
+        predicates:
+          - Path=/{path:^(?!api|ws).*}, /**
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never

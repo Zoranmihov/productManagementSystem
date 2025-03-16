@@ -8,5 +8,9 @@ services:
     container_name: gateway-microservice
     ports:
       - "8080:8080"
+
+    environment:
+      - JWT_SECRET=VerySecretCode
+
     volumes: 
       - .:/app
