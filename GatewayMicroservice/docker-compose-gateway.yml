@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  gateway_microservice:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: gateway-microservice
+    ports:
+      - "8080:8080"
+    volumes: 
+      - .:/app

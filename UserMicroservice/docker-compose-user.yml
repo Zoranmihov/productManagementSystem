@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  user_microservice:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    container_name: user-microservice
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://user_db:3306/user_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+    volumes:
+      - .:/app
+    depends_on:
+      - user_db
+    networks:
+      - pms-network
+
+  user_db:
+    image: mysql:8
+    container_name: user-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_user_data:/var/lib/mysql
+    networks:
+      - pms-network
+
+volumes:
+  mysql_user_data:
+
+networks:
+  pms-network:
