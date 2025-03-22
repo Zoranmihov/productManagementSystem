@@ -29,9 +29,6 @@ RUN chmod -R 777 /app
 # Package the application
 RUN ./mvnw clean package -DskipTests
 
-# Expose the port the application runs on
-EXPOSE 8081
-
 # Debugging step to list contents of target directory
 RUN ls -l target
 

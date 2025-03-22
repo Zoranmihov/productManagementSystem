@@ -1,2 +1,7 @@
 public:
   - /api/user/test
+  - /api/user/login
+
+protected:
+  ADMIN:
+    - /api/user/register

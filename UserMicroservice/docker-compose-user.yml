@@ -1,13 +1,9 @@
-version: '3.8'
-
 services:
   user_microservice:
     build:
-      context: . 
+      context: .
       dockerfile: Dockerfile
     container_name: user-microservice
-    ports:
-      - "8081:8081"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://user_db:3306/user_db
       - SPRING_DATASOURCE_USERNAME=root
@@ -16,7 +12,8 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - user_db
+      user_db:
+        condition: service_healthy
     networks:
       - pms-network
 
@@ -33,11 +30,13 @@ services:
       - "3307:3306"
     volumes:
       - mysql_user_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - pms-network
 
 volumes:
   mysql_user_data:
-
-networks:
-  pms-network:

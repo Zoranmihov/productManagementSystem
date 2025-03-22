@@ -36,7 +36,7 @@ public class UserAuthProviderService {
             DecodedJWT decodedJWT = verifier.verify(token);
 
             UserJwtDTO user = new UserJwtDTO(
-                decodedJWT.getClaim("id").asString(),
+                decodedJWT.getClaim("email").asString(),
                 decodedJWT.getClaim("role").asString()
             );
 
@@ -68,7 +68,7 @@ public class UserAuthProviderService {
                 .withIssuer(decodedJWT.getIssuer())
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
-                .withClaim("id", decodedJWT.getClaim("id").asString())
+                .withClaim("email", decodedJWT.getClaim("email").asString())
                 .withClaim("role", decodedJWT.getClaim("role").asString())
                 .sign(Algorithm.HMAC256(secretKey));
     }
@@ -86,6 +86,6 @@ public class UserAuthProviderService {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
         DecodedJWT decodedJWT = verifier.verify(token);
 
-        return decodedJWT.getClaim("id").asString();
+        return decodedJWT.getClaim("email").asString();
     }
 }
