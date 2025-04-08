@@ -2,6 +2,7 @@ package com.product_management_system.UserMicroservice.service;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +22,11 @@ public class UserService {
     private UserRepository userRepository;
 
     public RegisterResponseDTO register(RegisterDTO registerDTO) {
-        // Check for existing email
-        userRepository.findByEmail(registerDTO.getEmail())
-                .ifPresent(user -> {
-                    throw new AppException("Email is already in use", HttpStatus.BAD_REQUEST);
-                });
 
         // Create a new user entity
         Role role;
         if (registerDTO.getRole() == null || registerDTO.getRole().isEmpty()) {
-            role = Role.USER;
+            role = Role.CUSTOMER;
         } else {
             try {
                 role = Role.valueOf(registerDTO.getRole().toUpperCase());
@@ -45,8 +41,14 @@ public class UserService {
                 hashedPassword,
                 role);
 
-        // Save the user
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            if (ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+                throw new AppException("Email is already in use", HttpStatus.BAD_REQUEST);
+            }
+            throw new AppException("Registration failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         // Prepare response
         return new RegisterResponseDTO("Welcome");
@@ -56,13 +58,14 @@ public class UserService {
         // Find user by email
         User user = userRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED));
-    
+
         // Verify password
         if (!BCrypt.checkpw(loginDTO.getPassword(), user.getPassword())) {
             throw new AppException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
-    
+
         // Prepare and return response
-        return new LoginResponseDTO("Login successful", user.getEmail(), user.getName(), user.getRole().toString(), null);
+        return new LoginResponseDTO("Login successful", user.getEmail(), user.getName(), user.getRole().toString(),
+                null);
     }
 }

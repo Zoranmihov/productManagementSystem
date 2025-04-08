@@ -1,6 +1,8 @@
 package com.product_management_system.UserMicroservice.model;
 
 public enum Role {
-    USER,
-    ADMIN
+    CUSTOMER,
+    SALES,
+    PRODUCTION,
+    ADMIN,
 }

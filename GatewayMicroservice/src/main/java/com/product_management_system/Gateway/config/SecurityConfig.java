@@ -53,17 +53,15 @@ public class SecurityConfig {
                 routeConfig.getProtectedRoutes().forEach((service, roleBasedRoutes) -> {
                     if (roleBasedRoutes != null) {
                         roleBasedRoutes.forEach((role, routes) -> {
-                            if ("ADMIN".equals(role)) {
-                                routes.forEach(route -> exchange.pathMatchers(route).hasRole("ADMIN"));
-                            } else if ("USER".equals(role)) {
-                                routes.forEach(route -> exchange.pathMatchers(route).hasAnyRole("USER", "ADMIN"));
+                            if (routes != null) {
+                                routes.forEach(route -> exchange.pathMatchers(route).hasRole(role));
                             }
                         });
                     }
                 });
-
+                
                 // Default fallback
-                exchange.anyExchange().permitAll(); // TODO: tighten for production
+                exchange.anyExchange().permitAll();
             })
             .csrf(csrf -> csrf.disable())
             .httpBasic(httpBasic -> httpBasic.disable())

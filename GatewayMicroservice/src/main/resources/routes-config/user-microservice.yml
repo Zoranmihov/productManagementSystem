@@ -1,7 +1,7 @@
 public:
-  - /api/user/test
   - /api/user/login
+  - /api/user/register
 
 protected:
   ADMIN:
-    - /api/user/register
+    - /api/user/test
