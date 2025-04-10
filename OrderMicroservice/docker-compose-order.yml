@@ -1,0 +1,36 @@
+services:
+  order_microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order-microservice
+    ports:
+      - "8082:8082"
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - ORDER_ENV=development
+      - MONGO_URI=mongodb://order-mongo:27017
+      - MONGO_DB_NAME=ordersdb
+    depends_on:
+      - order-mongo
+    networks:
+      - pms-network
+
+  order-mongo:
+    image: mongo:6.0
+    container_name: order-mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - pms-network
+
+volumes:
+  mongo_data:
+
+networks:
+  pms-network:
+    driver: bridge

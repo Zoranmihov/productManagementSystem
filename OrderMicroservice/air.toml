@@ -1,0 +1,11 @@
+# air.toml
+[build]
+  cmd = "go run main.go"
+  includeExt = ["go"]
+  excludeDir = ["vendor", "tmp"]
+  delay = 500
+  stopOnError = true
+  log = "stdout"
+
+[log]
+  time = true

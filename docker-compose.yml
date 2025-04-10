@@ -1,6 +1,7 @@
 include:
   - path: ./GatewayMicroservice/docker-compose-gateway.yml
   - path: ./UserMicroservice/docker-compose-user.yml
+  - path: ./OrderMicroservice/docker-compose-order.yml
 
 networks:
   pms-network:
